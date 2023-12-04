@@ -1,0 +1,142 @@
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+    background-color: rgb(169, 240, 251);
+}
+
+.desktop-header {
+    background-color: #fff;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    position: relative;
+    z-index: 2;
+}
+
+.desktop-header img {
+    width: 150px;
+    margin-right: 10px;
+}
+
+.desktop-container {
+    display: flex;
+}
+
+.desktop-sidebar {
+    background-color: #fff;
+    width: 20%;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1;
+    padding: 20px; /* Ajusta según sea necesario */
+    box-sizing: border-box; /* Incluye el padding en el ancho total */
+    margin-top: 40px; /* Altura del header */
+}
+hr {
+    width: 100%;
+}
+.register-label {
+    display: block;
+    margin-top: 50px;
+    color: #9C2348;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+.login-label {
+    display: block;
+    margin-top: 300px;
+    color: #9C2348;
+    font-weight: bold;
+    cursor: pointer;
+    transition: color 0.3s;
+}
+.register-label:hover {
+    color: #9C2348;
+}
+
+.desktop-sidebar div {
+    margin-bottom: 10px;
+    display: flex; /* Agrega esta línea para usar flexbox */
+    align-items: center; /* Alinea los elementos verticalmente en el centro */
+}
+
+.desktop-sidebar label {
+    display: block;
+    font-weight: lighter;
+    margin-left: 5px; /* Añade margen izquierdo para separar el radio button del texto */
+    font-size: 18px;
+    color: #333;
+}
+
+.desktop-sidebar input[type="radio"] {
+    margin-right: 5px;
+    transform: scale(1.5);
+    border: 2px solid #9C2348;
+}
+
+.desktop-sidebar label,
+.desktop-sidebar input[type="radio"] {
+    margin-bottom: 5px;
+}
+
+.desktop-sidebar input[type="radio"]:checked {
+    color: #ab2758;
+    /* Cambia el color cuando está seleccionado */
+}
+
+
+.mobile-container {
+    display: none;
+    position: relative;
+}
+
+.menu-button {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+}
+
+.menu-button img {
+    width: 100%;
+}
+
+.mobile-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+}
+
+.mobile-header img {
+    width: 150px;
+}
+
+@media only screen and (max-width: 768px) {
+    .desktop-container {
+        display: none;
+    }
+
+    .mobile-container {
+        display: block;
+    }
+
+    .desktop-header {
+        display: none;
+    }
+
+    .mobile-header {
+        background-color: #fff;
+        display: flex;
+    }
+}

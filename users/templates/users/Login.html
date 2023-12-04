@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login</title>
+  {% load static %}
+  <link rel="stylesheet" href="{% static 'users/styleslogin.css' %}">
+</head>
+<body>
+  <header class="desktop-header">
+    <a href="{% url 'inicio:home' %}">
+      <img src="{% static 'inicio/logo.png' %}" alt="SAFE STORM Logo">
+    </a>
+    <span class="admin-text">- Administrador</span>
+  </header>
+
+  <div class="desktop-container">
+    <div class="left-half">
+      <img src="{% static 'users/background.png' %}" alt="Background Image">
+    </div>
+    <div class="right-half">
+      <h1>Iniciar Sesión</h1>
+      
+     
+      <form method="post" action="{% url 'users:login_user' %}">
+        {% csrf_token %}
+        
+        <div class="input-container">
+          <label for="username">Ingresar usuario</label>
+          <input type="text" id="username" name="username">
+        </div>
+        <div class="input-container">
+          <label for="password">Ingresar clave</label>
+          <input type="password" id="password" name="password">
+        </div>
+        
+        <button type="submit">ENTRAR</button>
+    </form>
+    <p>¿No tienes una cuenta? <a href="{% url 'users:register_user' %}">Regístrate aquí</a>.</p>
+    </div>
+  </div>
+
+  <div class="mobile-container">
+    <div class="menu-button">
+      <img src="{% static 'users/menu.png' %}" alt="Menu">
+    </div>
+    <div class="mobile-header">
+      <a href="{% url 'inicio:home' %}">
+        <img src="{% static 'inicio/logo.png' %}" alt="SAFE STORM Logo">
+      </a>
+      <h1>Iniciar Sesión</h1>
+    </div>
+    
+    <form method="post" action="{% url 'users:login_user' %}">
+    {% csrf_token %}
+    
+    <div class="input-container">
+      <label for="username">Ingresar usuario</label>
+      <input type="text" id="username-mobile" name="username">
+    </div>
+    <div class="input-container">
+      <label for="password">Ingresar clave</label>
+      <input type="password" id="password-mobile" name="password">
+    </div>
+    
+    <button type="submit">ENTRAR</button>
+</form>
+<p>¿No tienes una cuenta? <a href="{% url 'users:register_user' %}">Regístrate aquí</a>.</p>
+  </div>
+</body>
+</html>

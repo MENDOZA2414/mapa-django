@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.0.0/mapbox-gl.css" rel="stylesheet">
+    <title>Editar de elemento</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'inicio/styles-datos.css' %}">
+</head>
+
+<body>
+    <header class="desktop-header">
+        <a href="{% url 'inicio:home' %}">
+            <img src="{% static 'inicio/logo.png' %}" alt="SAFE STORM Logo">
+        </a> 
+        <span class="admin-text">- Administrador</span>
+    </header>
+
+    <div class="container">
+        <h1>Editar elemento</h1>
+
+        <form method="post" action="{% url 'inicio:editar_elemento' %}">
+            {% csrf_token %}
+            <!-- Nueva fila para la lista desplegable -->
+            <div class="form-container">
+                <div id="map"></div>
+
+                <div class="left-column">
+                    <label for="ocupacion_total">Ocupación total:</label>
+                    <input type="text" id="ocupacion_total" name="ocupacion_total" required>
+
+                    <label for="ocupacion_actual">Ocupación actual:</label>
+                    <input type="text" id="ocupacion_actual" name="ocupacion_actual" required>
+
+                    <label for="telefono">Num teléfonico:</label>
+                    <input type="tel" id="telefono" name="telefono" required>
+
+                    <button type="submit">ACTUALIZAR</button>
+                </div>
+
+                <div class="right-column">
+                    <label for="estado">Estado:</label>
+                    <select id="estado" name="estado" required>
+                        <option value="" disabled selected>Selecciona el estado</option>
+                        <option value="activo">Activo</option>
+                        <option value="desactivado">Desactivado</option>
+                    </select>
+
+                    <label for="suministro">Suministro:</label>
+                    <select id="suministro" name="suministro" required>
+                        <option value="" disabled selected>Selecciona el suministro</option>
+                        <option value="activo">Activo</option>
+                        <option value="desactivado">Desactivado</option>
+                    </select>
+
+                    <label for="latitud">Latitud:</label>
+                    <input type="text" id="latitudeInput" name="latitud" required>
+
+                    <label for="longitud">Longitud:</label>
+                    <input type="text" id="longitudeInput" name="longitud" required>
+
+                    <!-- Agrega el campo oculto para el tipo de elemento -->
+                    <input type="hidden" id="tipoElementoHidden" name="tipoElemento">
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="mobile-container">
+        <!-- ... (código móvil) ... -->
+    </div>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.0.0/mapbox-gl.js"></script>
+    <script>
+        // Script para cargar los datos del elemento en los inputs
+        document.addEventListener('DOMContentLoaded', function () {
+            // Obtén los parámetros de la URL
+            const urlParams = new URLSearchParams(window.location.search);
+
+            // Llena los campos con los valores de los parámetros
+            document.getElementById('ocupacion_total').value = urlParams.get('ocupacion_total') || '';
+            document.getElementById('ocupacion_actual').value = urlParams.get('ocupacion_actual') || '';
+            document.getElementById('telefono').value = urlParams.get('telefono') || '';
+            document.getElementById('estado').value = urlParams.get('estado') || '';
+            document.getElementById('suministro').value = urlParams.get('suministro') || '';
+            document.getElementById('latitudeInput').value = urlParams.get('lat') || '';
+            document.getElementById('longitudeInput').value = urlParams.get('lng') || '';
+            document.getElementById('tipoElementoHidden').value = urlParams.get('tipoElemento') || '';
+
+            // Mapa
+            mapboxgl.accessToken = 'pk.eyJ1Ijoiam1lbmRvemEyMSIsImEiOiJjbHBrMTgxdGgwNGl5MmtwYTBwYnpqbzBwIn0.ihvnLnkw9GvcmSVCaxws2Q';
+            const map = new mapboxgl.Map({
+                container: 'map',
+                style: 'mapbox://styles/mapbox/streets-v12',
+                center: [parseFloat(urlParams.get('lng')) || -110.31572100864456, parseFloat(urlParams.get('lat')) || 24.141241435178234],
+                zoom: 13
+            });
+
+            // Marcador
+            new mapboxgl.Marker()
+                .setLngLat([parseFloat(urlParams.get('lng')) || 0, parseFloat(urlParams.get('lat')) || 0])
+                .addTo(map);
+        });
+    </script>
+</body>
+
+</html>

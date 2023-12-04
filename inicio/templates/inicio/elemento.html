@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.0.0/mapbox-gl.css" rel="stylesheet">
+    <title>Registro de elemento</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'inicio/styles-datos.css' %}">
+</head>
+<body>
+    <header class="desktop-header">
+        <a href="{% url 'inicio:home' %}">
+            <img src="{% static 'inicio/logo.png' %}" alt="SAFE STORM Logo">
+        </a> 
+        <span class="admin-text">- Administrador</span>
+    </header>
+    
+    <div class="container">
+        <h1>Dar de alta nuevo elemento</h1>
+
+        <form method="post" action="{% url 'inicio:registrar_elemento' %}">
+            {% csrf_token %}
+            <div class="form-container">
+                <div class="center-column">
+                    <label for="tipoElemento">Selecciona el elemento:</label>
+                    <select id="tipoElemento" name="tipoElemento" required>
+                        <option value="" disabled selected>Selecciona el elemento</option>
+                        <option value="Albergue">Albergue</option>
+                        <option value="Hospital">Hospital</option>
+                        <option value="Bombero">Bomberos</option>
+                        <option value="CruceArroyo">Cruce de arroyo</option>
+                        <option value="Incidente">Incidente en vía pública</option>
+                    </select>
+                </div>
+                <div id="map"></div>
+
+                <div class="left-column">
+                    <label for="latitud">Latitud:</label>
+                    <input type="text" id="latitudeInput" name="latitud" required>
+
+                    <label for="longitud">Longitud:</label>
+                    <input type="text" id="longitudeInput" name="longitud" required>
+
+                    <input type="hidden" id="tipoElementoHidden" name="tipoElemento">
+                </div>
+
+                <div class="right-column">
+                    <div id="albergue-campos" class="tipo-elemento-campos" style="display: none;">
+                        <label for="ocupacionActualAlbergue">Ocupación actual:</label>
+                        <input type="text" id="ocupacionActualAlbergue" name="ocupacion_actual" required disabled>
+
+                        <label for="ocupacionTotalAlbergue">Ocupación total:</label>
+                        <input type="text" id="ocupacionTotalAlbergue" name="ocupacion_total" required disabled>
+
+                        <label for="estadoAlbergue">Estado:</label>
+                        <select id="estadoAlbergue" name="estadoAlbergue" required disabled>
+                            <option value="" disabled selected hidden>Selecciona el estado</option>
+                            <option value="Activo">Activo</option>
+                            <option value="Desactivado">Desactivado</option>
+                        </select>
+
+                        <label for="suministroAlbergue">Suministro eléctrico :</label>
+                        <select id="suministroAlbergue" name="suministroAlbergue" required disabled>
+                            <option value="" disabled selected hidden>Selecciona el suministro</option>
+                            <option value="Activo">Activo</option>
+                            <option value="Desactivado">Desactivado</option>
+                        </select>
+
+                        <label for="telefonoAlbergue">Teléfonos:</label>
+                        <input type="tel" id="telefonoAlbergue" name="telefonoAlbergue" required disabled>
+                    </div>
+
+                    <div id="hospital-campos" class="tipo-elemento-campos" style="display: none;">
+                        <label for="disponibilidad">Disponibilidad:</label>
+                        <select id="disponibilidad" name="disponibilidad" required disabled>
+                            <option value="" disabled selected>Selecciona la disponibilidad</option>
+                            <option value="Baja">Baja</option>
+                            <option value="Media">Media</option>
+                            <option value="Alta">Alta</option>
+                        </select>
+                    
+                        <label for="estadoHospital">Estado:</label>
+                        <select id="estadoHospital" name="estadoHospital" required disabled>
+                            <option value="" disabled selected hidden>Selecciona el estado</option>
+                            <option value="Activo">Activo</option>
+                            <option value="Desactivado">Desactivado</option>
+                        </select>
+                    
+                        <label for="telefonoHospital">Teléfonos:</label>
+                        <input type="tel" id="telefonoHospital" name="telefonoHospital" required disabled>
+                    </div>
+                    
+                    <div id="bombero-campos" class="tipo-elemento-campos" style="display: none;">
+                      
+                        <label for="suministroBombero">Suministro eléctrico:</label>
+                        <select id="suministroBombero" name="suministroBombero" required disabled>
+                            <option value="" disabled selected>Selecciona el suministro eléctrico</option>
+                            <option value="Activo">Activo</option>
+                            <option value="Desactivado">Desactivado</option>
+                        </select>
+
+                        <label for="telefonos_bombero">Teléfonos:</label>
+                        <input type="tel" id="telefonos_bombero" name="telefonos_bombero" required disabled>
+
+                    </div>
+
+                    <div id="crucearroyo-campos" class="tipo-elemento-campos" style="display: none;">
+                        <label for="condicion">Condición:</label>
+                        <select id="condicion" name="condicion" required disabled>
+                            <option value="" disabled selected>Selecciona el suministro eléctrico</option>
+                            <option value="Transitable">Transitable</option>
+                            <option value="Transitar con precaución">Transitar con precaución</option>
+                            <option value="No transitable">No transitable</option>
+                        </select>
+                        <!-- Campos específicos para incidente -->
+                        <label for="detalles_arroyo">Detalles:</label>
+                        <textarea id="detalles_arroyo" name="detalles_arroyo" rows="10" cols="50" style="resize: none;" required disabled></textarea>
+
+                    </div>
+                    
+                    <div id="incidente-campos" class="tipo-elemento-campos" style="display: none;">
+                        <!-- Campos específicos para incidente -->
+                        <label for="detalles_incidente">Detalles:</label>
+                        <textarea id="detalles_incidente" name="detalles_incidente" rows="10" cols="50" style="resize: none;" required disabled></textarea>
+
+                    </div>
+
+                    <!-- Repite la estructura similar para Hospital, Bombero, Cruce de arroyo e Incidente -->
+
+                    <button type="submit">REGISTRAR</button>
+                    
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="mobile-container">
+    
+    </div>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.0.0/mapbox-gl.js"></script>
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1Ijoiam1lbmRvemEyMSIsImEiOiJjbHBrMTgxdGgwNGl5MmtwYTBwYnpqbzBwIn0.ihvnLnkw9GvcmSVCaxws2Q';
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v12',
+            center: [-110.31572100864456, 24.141241435178234],
+            zoom: 13
+        });
+
+        let marker;
+
+        map.on('click', (e) => {
+            const coordinates = e.lngLat.wrap();
+
+            if (marker) {
+                marker.remove();
+            }
+
+            marker = new mapboxgl.Marker()
+                .setLngLat(coordinates)
+                .addTo(map);
+
+            document.getElementById('latitudeInput').value = coordinates.lat;
+            document.getElementById('longitudeInput').value = coordinates.lng;
+        });
+
+        document.getElementById('tipoElemento').addEventListener('change', function () {
+            const tipoElemento = this.value;
+
+            const todasLasSecciones = document.querySelectorAll('.tipo-elemento-campos');
+            todasLasSecciones.forEach(seccion => {
+                seccion.style.display = 'none';
+            });
+
+            const seccionActual = document.getElementById(`${tipoElemento.toLowerCase().replace(/\s/g, '')}-campos`);
+            seccionActual.style.display = 'block';
+
+            document.getElementById('tipoElementoHidden').value = tipoElemento;
+
+            // Habilitar campos específicos según el tipo de elemento
+            const selects = seccionActual.querySelectorAll('select');
+            const inputsTel = seccionActual.querySelectorAll('input[type="tel"]');
+            const inputsText = seccionActual.querySelectorAll('input[type="text"]');
+            const textArea = seccionActual.querySelectorAll('textarea');
+            selects.forEach(select => select.disabled = false);
+            inputsTel.forEach(input => input.disabled = false);
+            inputsText.forEach(input => input.disabled = false);
+            textArea.forEach(area => area.disabled = false);
+        });
+
+        document.getElementById('registroForm').addEventListener('submit', function(event) {
+            const tipoElemento = document.getElementById('tipoElemento').value;
+            const seccionActual = document.getElementById(`${tipoElemento.toLowerCase().replace(/\s/g, '')}-campos`);
+
+            // Deshabilitar campos específicos según el tipo de elemento
+            const inputsText = seccionActual.querySelectorAll('input[type="text"]');
+            const textArea = seccionActual.querySelectorAll('textarea');
+            inputsText.forEach(input => input.disabled = true);
+            textArea.forEach(area => area.disabled = true);
+
+            // Mostrar campos comunes
+            document.getElementById('camposComunes').style.display = 'block';
+        });
+    </script>
+</body>
+</html>

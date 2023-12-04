@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Safe-Storm</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <link href="https://api.mapbox.com/mapbox-gl-js/v3.0.0/mapbox-gl.css" rel="stylesheet">
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.0.0/mapbox-gl.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            left: 20%;
+            right: 0;
+            bottom: 0;
+            width: 80%;
+        }
+
+        #rectangle {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50px;
+            background-color: #ffffff;
+            box-shadow: 0px 5px 5px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+        }
+
+        .marker {
+            cursor: pointer;
+        }
+    </style>
+     {% load static %}
+     <link rel="stylesheet" href="{% static 'inicio/styles-filtros.css' %}">
+</head>
+
+<body>
+    <header class="desktop-header">
+        <a href="{% url 'inicio:home' %}">
+            <img src="{% static 'inicio/logo.png' %}" alt="SAFE STORM Logo">
+        </a>        
+        <span class="admin-text">- Administrador</span>
+    </header>
+    
+    <div class="desktop-container">
+        <div class="desktop-sidebar">
+        <br>
+          <label for="categoria">Selecciona la categoría que te interesa visualizar</label>
+          <br>
+          <div>
+            <input type="radio" id="todos" name="categoria" checked>
+            <label for="todos">Todos</label>
+          </div>
+          <div>
+            <input type="radio" id="albergues" name="categoria">
+            <label for="albergues">Albergues</label>
+          </div>
+          <div>
+            <input type="radio" id="hospitales" name="categoria">
+            <label for="hospitales">Hospitales</label>
+          </div>
+          <div>
+            <input type="radio" id="cruces" name="categoria">
+            <label for="cruces">Cruces de arroyos</label>
+          </div>
+          <div>
+            <input type="radio" id="bomberos" name="categoria">
+            <label for="bomberos">Bomberos</label>
+          </div>
+
+          <label class="register-label" onclick="location.href='{% url 'inicio:registrar_elemento' %}'">Crear nuevo elemento</label>
+          <label class="login-label" onclick="location.href='{% url 'users:login_user' %}'">Login</label>
+          <hr>
+        </div>
+    <div id="map"></div>
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1Ijoiam1lbmRvemEyMSIsImEiOiJjbHBrMTgxdGgwNGl5MmtwYTBwYnpqbzBwIn0.ihvnLnkw9GvcmSVCaxws2Q';
+        const map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v12',
+            center: [-110.31572100864456, 24.141241435178234],
+            zoom: 13
+        });
+
+        const updateSymbolSize = (index, zoom) => {
+            const baseSize = 30;
+            const baseIconSize = 0.8;
+
+            if (zoom >= 10 && zoom < 13) {
+                const circleRadius = baseSize / Math.pow(2, (18 - zoom));
+                const iconSize = baseIconSize / Math.pow(2, (18 - zoom));
+
+                map.setPaintProperty(`circle-layer-${index}`, 'circle-radius', circleRadius);
+                map.setLayoutProperty(`places-${index}`, 'icon-size', iconSize);
+            } else if (zoom >= 13) {
+                map.setPaintProperty(`circle-layer-${index}`, 'circle-radius', baseSize);
+                map.setLayoutProperty(`places-${index}`, 'icon-size', baseIconSize);
+            }
+        };
+
+        const getColorByType = (tipo, value) => {
+            if (tipo === 'Albergue') {
+                // Calcular el porcentaje de ocupación
+                const porcentajeOcupacion = (value.ocupacion_actual / value.ocupacion_total) * 100;
+
+                // Asignar color en función del porcentaje de ocupación
+                if (porcentajeOcupacion <= 75) {
+                    return '#31CA01'; // Verde
+                } else if (porcentajeOcupacion <= 99) {
+                    return '#FCF510'; // Amarillo
+                } else {
+                    return '#EF0F0F'; // Rojo
+                }
+            } else if (tipo === 'Hospital') {
+                // Asignar color en función de la disponibilidad
+                if (value.disponibilidad === 'Baja') {
+                    return '#EF0F0F'; // Rojo
+                } else if (value.disponibilidad === 'Media') {
+                    return '#FCF510'; // Amarillo
+                } else {
+                    return '#31CA01'; // Verde
+                }
+            } else if (tipo === 'Bombero') {
+                // Color fijo para bomberos (azul claro)
+                return '#ADD8E6'; // Azul claro
+            }
+            // Puedes agregar más lógica para otros tipos de elementos aquí
+            return '#000000'; // Color por defecto
+        };
+
+        const agregarMarcadores = () => {
+            const elementos = [
+                {% for albergue in albergues %}
+                    {
+                        tipo: 'Albergue',
+                        coordinates: [{{ albergue.elemento.longitud }}, {{ albergue.elemento.latitud}}],
+                        image: 'https://img.icons8.com/?size=50&id=37053&format=png',
+                        ocupacion_actual: parseInt('{{ albergue.ocupacion_actual }}', 10),
+                        ocupacion_total: parseInt('{{ albergue.ocupacion_total }}', 10),
+                        estado: '{{ albergue.estado }}',
+                        suministro_electrico: '{{ albergue.suministro_electrico }}',
+                        telefonos: '{{ albergue.telefonos }}',
+                    },
+                {% endfor %}
+
+                {% for hospital in hospitales %}
+                    {
+                        tipo: 'Hospital',
+                        coordinates: [{{ hospital.elemento.longitud }}, {{ hospital.elemento.latitud}}],
+                        image: 'https://img.icons8.com/?size=64&id=1SaxNctW6dMX&format=png',
+                        disponibilidad: '{{ hospital.disponibilidad }}',
+                        estado: '{{ hospital.estado }}',
+                        telefonos: '{{ hospital.telefonos }}',
+                    },
+                {% endfor %}
+
+                {% for bombero in bomberos %}
+
+                    {
+                        tipo: 'Bombero',
+                        coordinates: [{{ bombero.elemento.longitud }}, {{ bombero.elemento.latitud}}],
+                        image: 'https://img.icons8.com/?size=50&id=8985&format=png',  // Ajusta el tamaño del ícono según tus necesidades
+                        suministro_electrico: '{{ bombero.suministro_electrico }}',
+                        telefonos: '{{ bombero.telefonos }}',
+                    },
+
+                {% endfor %}
+            ];
+
+            elementos.forEach((elemento, index) => {
+            let popupContent = `<strong>${elemento.tipo}</strong>`;
+
+            if (elemento.tipo === 'Albergue') {
+                popupContent += `
+                    <p>Ocupación: ${elemento.ocupacion_actual} de ${elemento.ocupacion_total}</p>
+                    <p>Estado: ${elemento.estado}</p>
+                    <p>Suministro Eléctrico: ${elemento.suministro_electrico}</p>`;
+            } else if (elemento.tipo === 'Hospital') {
+                popupContent += `
+                    <p>Disponibilidad: ${elemento.disponibilidad}</p>
+                    <p>Estado: ${elemento.estado}</p>`;
+            } else if (elemento.tipo === 'Bombero') {
+                popupContent += `
+                    <p>Suministro Eléctrico: ${elemento.suministro_electrico}</p>`;
+            }
+
+            popupContent += `
+                <p>Teléfono: ${elemento.telefonos}</p>
+                <a href="{% url 'inicio:editar_elemento' %}?lat=${elemento.coordinates[1]}&lng=${elemento.coordinates[0]}&tipo=${elemento.tipo}&telefonos=${elemento.telefonos}" target="_self">Editar elemento</a>`;
+
+            const el = document.createElement('div');
+            el.className = 'marker';
+            el.style.backgroundImage = `url(${elemento.image})`;
+            el.style.width = '40px';
+            el.style.height = '40px';
+            el.style.backgroundSize = 'cover';
+            el.style.backgroundPosition = 'center';
+            el.style.borderRadius = '50%';
+
+            // Calcula el color del círculo
+            const circleColor = getColorByType(elemento.tipo, elemento);
+
+            // Agrega el círculo al mapa
+            map.addLayer({
+                id: `circle-layer-${index}`,
+                type: 'circle',
+                source: {
+                    type: 'geojson',
+                    data: {
+                        type: 'Feature',
+                        geometry: {
+                            type: 'Point',
+                            coordinates: elemento.coordinates,
+                        },
+                    },
+                },
+                paint: {
+                    'circle-radius': 10,  
+                    'circle-color': circleColor,
+                    'circle-opacity': 0.7,
+                },
+            });
+
+            // Agrega el marcador al mapa
+            const marker = new mapboxgl.Marker(el)
+                .setLngLat(elemento.coordinates)
+                .setPopup(new mapboxgl.Popup().setHTML(popupContent))
+                .addTo(map);
+
+            // Evento para cambiar el cursor al pasar el ratón
+            el.addEventListener('mouseenter', () => {
+                map.getCanvas().style.cursor = 'pointer';
+            });
+
+            // Evento para restaurar el cursor al salir del marcador
+            el.addEventListener('mouseleave', () => {
+                map.getCanvas().style.cursor = '';
+            });
+
+            // Actualiza tamaño del símbolo
+            updateSymbolSize(index, map.getZoom());
+        });
+    };
+
+        map.on('load', () => {
+            agregarMarcadores();
+        });
+
+        
+    </script>
+</body>
+
+</html>

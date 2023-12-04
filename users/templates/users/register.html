@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
+    <title>Registro de Usuario</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'users/stylesregister.css' %}">
+</head>
+<body>
+    <header class="desktop-header">
+        <a href="{% url 'inicio:home' %}">
+            <img src="{% static 'inicio/logo.png' %}" alt="SAFE STORM Logo">
+        </a> 
+        <span class="admin-text">- Administrador</span>
+    </header>
+    <div class="container">
+        <h1>Registrar nuevo usuario</h1>
+        <form method="post" action="{% url 'users:register_user' %}">
+            {% csrf_token %}
+            <div class="form-container">
+                <div class="left-column">
+                    <label for="nombres">Nombre/s:</label>
+                    <input type="text" id="nombres" name="nombres" required>
+
+                    <label for="apellidos">Apellidos:</label>
+                    <input type="text" id="apellidos" name="apellidos" value="Sin apellidos" required>
+
+                    <label for="telefono">Num teléfonico:</label>
+                    <input type="tel" id="telefono" name="telefono" required>
+                </div>
+
+                <div class="right-column">
+                    <label for="email">Email:</label>
+                    <input type="email" id="email" name="email" required>
+
+                    <label for="password">Contraseña:</label>
+                    <input type="password" id="password" name="password" required>
+
+                    <button type="submit">REGISTRAR</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div class="mobile-container">
+        <div class="menu-button">
+            <img src="{% static 'users/menu.png' %}" alt="Menu">
+        </div>
+        <div class="mobile-header">
+            <img src="{% static 'users/logo.png' %}" alt="SAFE STORM Logo">
+            <h1>Registro de Sesión</h1>
+        </div>
+
+        <form method="post" action="{% url 'users:register_user' %}">
+            {% csrf_token %}
+            <div class="input-container">
+                <label for="name">Nombre/s</label>
+                {{ form.nombres }}
+            </div>
+            <div class="input-container">
+                <label for="lastname">Apellidos</label>
+                {{ form.apellidos }}
+            </div>
+            <div class="input-container">
+                <label for="phone">Num teléfonico</label>
+                {{ form.telefono }}
+            </div>
+            <div class="input-container">
+                <label for="email">Email</label>
+                {{ form.email }}
+            </div>
+            <div class="input-container">
+                <label for="password">Contraseña</label>
+                {{ form.password }}
+            </div>
+            <button type="submit">REGISTRAR</button>
+        </form>
+
+    </div>
+</body>
+</html>

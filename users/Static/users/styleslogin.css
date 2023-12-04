@@ -1,0 +1,136 @@
+body {
+    margin: 0;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .desktop-header {
+    background-color: transparent;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  }
+  
+  .desktop-header img {
+    width: 150px;
+    margin-right: 10px; /* Ajusta según sea necesario */
+  }
+  
+  .admin-text {
+    color: #1B5C4F;
+    font-size: 1em;
+    margin-right: auto; /* Empuja el texto hacia la izquierda */
+  }
+  
+  .desktop-container {
+    display: flex;
+    height: 100vh;
+  }
+  
+  .left-half {
+    flex: 1;
+    background-color: #9C2348;
+    position: relative;
+  }
+  .opacidad-imagen {
+    opacity: 0.4; 
+  }
+  .background-image {
+    width: 100%;
+    height: 95%;
+    opacity: 0.4;
+  }
+  
+  .right-half {
+    flex: 1;
+    background-color: #FFFFFF;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    margin-top: 100px;
+  }
+  
+  h1 {
+    color: #474747;
+    font-weight: 300;
+    margin-bottom: 60px;
+  }
+  
+  .input-container {
+    margin-bottom: 20px;
+  }
+  
+  .input-container label {
+    display: block;
+    margin-bottom: 5px;
+    color: #474747;
+  }
+  
+  input {
+    width: 300px;
+    padding: 10px;
+    border: 3px solid rgba(0, 0, 0, 0.4);
+    border-radius: 12px;
+    outline: none;
+  }
+  
+  button {
+    padding: 10px 20px;
+    background-color: #9C2348;
+    color: #FFFFFF;
+    border: 3px solid rgba(0, 0, 0, 0.4);
+    border-radius: 12px;
+    cursor: pointer;
+    outline: none;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
+  }
+  
+  .button:hover {
+    background-color: #72253E;
+  }
+  
+  .mobile-container {
+    display: none;
+    position: relative;
+  }
+  
+  .menu-button {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 30px;
+    height: 30px;
+    cursor: pointer;
+  }
+  
+  .menu-button img {
+    width: 100%;
+  }
+  
+  @media only screen and (max-width: 768px) {
+    .desktop-container {
+      display: none;
+    }
+  
+    .mobile-container {
+      display: block;
+      text-align: center;
+    }
+  
+    .desktop-header {
+      display: none;
+    }
+  
+    .mobile-header {
+      padding: 30px 10px; /* Ajusta según sea necesario */
+    }
+  
+    .mobile-header img {
+      width: 100%; /* Ajusta según sea necesario */
+      max-width: 200px; /* Ajusta según sea necesario */
+      margin-bottom: 20px; /* Ajusta según sea necesario */
+    }
+  }
+  
